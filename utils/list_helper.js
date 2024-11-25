@@ -1,3 +1,12 @@
-export const dummy = (blogs) => {
+const dummy = (blogs) => {
   return 1
+}
+
+const totalLikes = (blogs) => {
+  return blogs.reduce((sum, blog) => sum + blog.likes, 0)
+}
+
+export default {
+  dummy,
+  totalLikes
 }
