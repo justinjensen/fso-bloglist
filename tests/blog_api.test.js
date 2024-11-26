@@ -26,7 +26,7 @@ test('there are two blogs', async () => {
   assert.strictEqual(response.body.length, 2)
 })
 
-test('uniique identifier property of the blog posts is named id', async () => {
+test('unique identifier property of the blog posts is named id', async () => {
   const response = await api.get('/api/blogs')
   const blogs = response.body
   assert.strictEqual('id' in blogs[0], true)
@@ -89,6 +89,25 @@ test('missing title and url properties results in a 400 Bad Request', async () =
   }
 
   await api.post('/api/blogs').send(newBlog).expect(400)
+})
+
+test('delete a blog that exists', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToDelete = blogsAtStart[0]
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+
+  const titles = blogsAtEnd.map((blog) => blog.title)
+  assert(!titles.includes(blogToDelete.title))
+})
+
+test('deleting a blog that does not exist results in a 404 Not Found', async () => {
+  const id = new mongoose.Types.ObjectId()
+  await api.delete(`/api/blogs/${id}`).expect(404)
 })
 
 after(async () => {
