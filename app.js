@@ -10,14 +10,16 @@ const app = express()
 
 mongoose.set('strictQuery', false)
 
-mongoose
-  .connect(config.MONGODB_URI)
-  .then(() => {
+const connectToDatabase = async () => {
+  try {
+    await mongoose.connect(config.MONGODB_URI)
     logger.info('connected to MongoDB')
-  })
-  .catch((error) => {
-    logger.error('error connection to MongoDB:', error.message)
-  })
+  } catch (error) {
+    logger.error('error connecting to MongoDB:', error.message)
+  }
+}
+
+connectToDatabase()
 
 app.use(cors())
 app.use(express.static('dist'))
