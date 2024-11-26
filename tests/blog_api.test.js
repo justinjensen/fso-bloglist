@@ -110,6 +110,25 @@ test('deleting a blog that does not exist results in a 404 Not Found', async () 
   await api.delete(`/api/blogs/${id}`).expect(404)
 })
 
+test('update a blog that exists', async () => {
+  const blogsAtStart = await helper.blogsInDb()
+  const blogToUpdate = blogsAtStart[0]
+  const updatedBlog = {
+    title: 'Why you should never trust a cat',
+    author: 'TotallyNotADog',
+    url: 'http://pawspace.com',
+    likes: 4
+  }
+
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(200)
+  const blogsAtEnd = await helper.blogsInDb()
+  const updatedBlogInDb = blogsAtEnd.find((blog) => blog.id === blogToUpdate.id)
+  assert.strictEqual(updatedBlogInDb.title, 'Why you should never trust a cat')
+  assert.strictEqual(updatedBlogInDb.author, 'TotallyNotADog')
+  assert.strictEqual(updatedBlogInDb.url, 'http://pawspace.com')
+  assert.strictEqual(updatedBlogInDb.likes, 4)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
