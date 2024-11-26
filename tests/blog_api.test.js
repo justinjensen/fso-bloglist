@@ -35,6 +35,31 @@ test('uniique identifier property of the blog posts is named id', async () => {
   assert.strictEqual('_id' in blogs[1], false)
 })
 
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'How to Train Your Cat to Do Taxes',
+    author: 'Furman Meowthews',
+    url: 'http://cataccountant.com',
+    likes: 9
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+
+  const lastBlog = response.body[response.body.length - 1]
+  assert.strictEqual(lastBlog.title, 'How to Train Your Cat to Do Taxes')
+  assert.strictEqual(lastBlog.author, 'Furman Meowthews')
+  assert.strictEqual(lastBlog.url, 'http://cataccountant.com')
+  assert.strictEqual(lastBlog.likes, 9)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
