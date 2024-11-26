@@ -60,6 +60,28 @@ test('a valid blog can be added', async () => {
   assert.strictEqual(lastBlog.likes, 9)
 })
 
+test('missing likes property defaults to zero', async () => {
+  const newBlog = {
+    title: '10 Reasons You Should Fear Squirrels',
+    author: 'Acorn McNutty',
+    url: 'http://squirrelwatch.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+
+  const lastBlog = response.body[response.body.length - 1]
+  assert.strictEqual(lastBlog.title, '10 Reasons You Should Fear Squirrels')
+  assert.strictEqual(lastBlog.author, 'Acorn McNutty')
+  assert.strictEqual(lastBlog.url, 'http://squirrelwatch.com')
+  assert.strictEqual(lastBlog.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
