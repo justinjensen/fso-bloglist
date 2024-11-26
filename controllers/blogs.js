@@ -24,6 +24,9 @@ blogsRouter.put('/:id', async (request, response) => {
       request.body,
       { new: true, runValidators: true }
     )
+    if (!updatedBlog) {
+      return response.status(404).json({ error: 'Blog not found' })
+    }
     response.json(updatedBlog)
   } catch (exception) {
     response.status(400).json({ error: exception.message })

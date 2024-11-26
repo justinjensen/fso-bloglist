@@ -129,6 +129,23 @@ test('update a blog that exists', async () => {
   assert.strictEqual(updatedBlogInDb.likes, 4)
 })
 
+test('updating a blog that does not exist results in a 404 Not Found', async () => {
+  const id = new mongoose.Types.ObjectId()
+  const updatedBlog = {
+    title: 'Why you should never trust a cat',
+    author: 'TotallyNotADog',
+    url: 'http://pawspace.com',
+    likes: 4
+  }
+  await api.put(`/api/blogs/${id}`).send(updatedBlog).expect(404)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+
+  const titles = blogsAtEnd.map((blog) => blog.title)
+  assert(!titles.includes('Why you should never trust a cat'))
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
