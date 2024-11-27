@@ -63,6 +63,72 @@ describe('user api', () => {
     assert.strictEqual(lastUser.username, 'millie')
     assert.strictEqual(lastUser.name, 'Mildred the cat')
   })
+
+  test('a user cannot be added without a username', async () => {
+    const newUser = {
+      name: 'Mildred the cat',
+      password: 'friskies'
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'username and password are required.' })
+
+    const response = await api.get('/api/users')
+    assert.strictEqual(response.body.length, 2)
+  })
+
+  test('a user cannot be added with a username shorter than 3 characters', async () => {
+    const newUser = {
+      username: 'mi',
+      name: 'Mildred the cat',
+      password: 'friskies'
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'username must be at least 3 characters long' })
+
+    const response = await api.get('/api/users')
+    assert.strictEqual(response.body.length, 2)
+  })
+
+  test('a user cannot be added without a password', async () => {
+    const newUser = {
+      username: 'millie',
+      name: 'Mildred the cat'
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'username and password are required.' })
+
+    const response = await api.get('/api/users')
+    assert.strictEqual(response.body.length, 2)
+  })
+
+  test('a user cannot be added with a password shorter than 3 characters', async () => {
+    const newUser = {
+      username: 'millie',
+      name: 'Mildred the cat',
+      password: 'fr'
+    }
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+      .expect({ error: 'password must be at least 3 characters long' })
+
+    const response = await api.get('/api/users')
+    assert.strictEqual(response.body.length, 2)
+  })
 })
 
 after(async () => {
