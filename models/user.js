@@ -3,13 +3,13 @@ import { Schema, model } from 'mongoose'
 const userSchema = new Schema({
   username: String,
   name: String,
-  passwordHash: String
-  // blogs: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: 'Blog'
-  //   }
-  // ]
+  passwordHash: String,
+  blogs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {
