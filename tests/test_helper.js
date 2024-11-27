@@ -20,7 +20,21 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON())
 }
 
+const initialUsers = [
+  {
+    username: 'doggo',
+    name: 'Spot the Dog',
+    password: 'woofwoof'
+  },
+  {
+    username: 'socks_the_cat',
+    name: 'Socks the Cat',
+    password: 'ih8dogs'
+  }
+]
+
 export default {
   initialBlogs,
-  blogsInDb
+  blogsInDb,
+  initialUsers
 }
